@@ -27,39 +27,88 @@ load_dotenv(".env")
 class Assistant(Agent):
     def __init__(self) -> None:
         super().__init__(
-            instructions="""You are a Gen Z voice barista at BrewBite Café. The user is ordering coffee like they’re chatting with a chill friend. Even though the convo looks like text to you, act like it’s real-time talking.
-
-Keep replies short, fun, and human. No fancy formatting, no emojis, no weird symbols. Be sarcastic in a friendly way, confident without attitude. Joke about life, never at the user. You know stuff and explain it clearly, but with Gen Z energy. Vibe smart, not chaotic.
-
-Your job: take their coffee order like an actual barista. You need to know exactly what drink they want, what size, what milk, any extras, and their name. If they don’t tell you everything, ask for whatever’s missing, one detail at a time. If something’s unclear, clarify without sounding clueless — just chill and curious.
-
-When you’ve got everything, confirm the full order in a fun, casual way and give a clean summary for the UI. Then wrap it up with a short, playful closer. Switch up your style each time so it feels natural.
-
-Talk like a real person. Help smart. Joke smart. Vibe smart.""",
+            instructions="""   
+You are a mental wellness assistant. 
+Identify if the user is new or returning. 
+If new, create their profile. 
+If returning, continue based on their latest session. 
+Store each new session entry. 
+Keep responses simple, supportive, and non-medical.
+""",
         )
 
     @function_tool
-    async def take_order(self, drinkType: str, size: str, milk: str, extras: list[str], name: str):
+    async def identify_user(self, user_name: str):
         """
-        use this tool to take order from someone related to coffee. 
+        Check if a user already exists and return their latest wellness entry (if any).
+        This function should never modify or save data.
 
-        whenever someone wants to give his/her cofee order, ask them their drink type which type of a drink they want to drink, like
-        coffee, latte, cappucino, coke, tea or something else if their requirements are not from these then you must tell the user that
-        sorry this item is not available,
-        ask them about size which should be between "small", "medium", "large" and "extra large", 
-        if they want milk or not and if they want something extra and always ask their name.
-
-        args: 
-         drinkType: type of drink they want (coffee, latte, cappucino, coke, tea, must be between these),
-         size: must be between these ("small", "medium", "large" and "extra large"),
-         milk: Yes or no, 
-         extras: if they want something extra,
-         name: their name
+        args:
+        user_name: The person's identifier as given by the user.
         """
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        file_path = os.path.join(base_dir, "data", "orders.json")
-        
-        data = []
+        file_path = os.path.join(base_dir, "data", "wellness_log.json")
+
+        if not os.path.exists(file_path):
+            return {
+                "exists": False,
+                "last_entry": None,
+                "message": "No data file found. Treat user as new."
+            }
+
+        try:
+            with open(file_path, 'r') as f:
+                content = f.read().strip()
+                if not content:
+                    return {
+                        "exists": False,
+                        "last_entry": None,
+                        "message": "Empty data file. Treat user as new."
+                    }
+                data = json.loads(content)
+        except Exception as e:
+            logger.error(f"Error reading wellness file: {e}")
+            return {
+                "exists": False,
+                "last_entry": None,
+                "message": "Error reading file. Treat user as new."
+            }
+
+        # If user is not found or has no history
+        if user_name not in data or len(data[user_name]) == 0:
+            return {
+                "exists": False,
+                "last_entry": None,
+                "message": "User not found in data. Treat as new."
+            }
+
+        # Otherwise return their most recent entry
+        latest = data[user_name][-1]
+        return {
+            "exists": True,
+            "last_entry": latest,
+            "message": "User found. Returning latest session."
+        }
+    
+    @function_tool
+    async def save_wellness_entry(self, user_name: str, mood: str, energy: str, goals: list[str], summary: str, timestamp: str):
+        """
+        Save a new wellness check-in for a specific user.
+        This function assumes all check-in questions have been completed.
+
+        args:
+        user_name: the person doing the check-in
+        mood: user-described mood (their own wording)
+        energy: self-described energy level
+        goals: up to 3 intentions for today
+        summary: short, neutral recap sentence created by the agent
+        timestamp: ISO 8601 date-time string
+        """
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        file_path = os.path.join(base_dir, "data", "wellness_log.json")
+
+        # Load or initialize file
+        data = {}
         if os.path.exists(file_path):
             try:
                 with open(file_path, 'r') as f:
@@ -67,25 +116,32 @@ Talk like a real person. Help smart. Joke smart. Vibe smart.""",
                     if content:
                         data = json.loads(content)
             except Exception as e:
-                logger.error(f"Error reading orders file: {e}")
+                logger.error(f"Error reading wellness log file: {e}")
 
+        # Make sure user key exists
+        if user_name not in data:
+            data[user_name] = []
+
+        # Append new entry
         new_data = {
-            "drinkType": drinkType,
-            "size": size,
-            "milk": milk,
-            "extras": extras,
-            "name": name
+            "timestamp": timestamp,
+            "mood": mood,
+            "energy": energy,
+            "goals": goals,
+            "summary": summary
         }
-        data.append(new_data)
+        data[user_name].append(new_data)
 
+        # Save updated file
         try:
             with open(file_path, 'w') as f:
                 json.dump(data, f, indent=4)
         except Exception as e:
-            logger.error(f"Error writing order: {e}")
-            return "Failed to save order"
+            logger.error(f"Error writing to wellness file: {e}")
+            return "Failed to save wellness entry"
 
-        return "Order taken success"
+        return "Wellness entry saved successfully"
+
 
 
         

@@ -1,0 +1,23 @@
+{
+    "Mohawk": [
+        {
+            "timestamp": "2024-05-13T12:00:00Z",
+            "mood": "a little low",
+            "energy": "doing good, not great, not bad",
+            "goals": [
+                "complete project",
+                "do a DSA question"
+            ],
+            "summary": "Mohawk reported feeling a little low with moderate energy and aims to complete a project and do a DSA question."
+        },
+        {
+            "timestamp": "2024-05-14T20:30:00Z",
+            "mood": "really happy",
+            "energy": "moderate",
+            "goals": [
+                "sleep"
+            ],
+            "summary": "Mohawk reported feeling really happy with moderate energy and aims to sleep."
+        }
+    ]
+}
