@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Head from "next/head";
 
 interface HeroProps {
   onStartCall?: () => void;
@@ -9,44 +8,63 @@ interface HeroProps {
 
 export default function Hero({ onStartCall }: HeroProps) {
   return (
-    <>
-      <header role="banner" className="relative w-full h-screen flex items-center justify-center px-4 overflow-hidden">
-        <Image
-          src="/dna.png"
-          alt=""
-          aria-hidden="true"
-          width={1400}
-          height={1400}
-          className="absolute -right-40 -top-40 md:-right-60 md:-top-60 w-[1400px] h-[1400px] opacity-10 md:opacity-20 pointer-events-none transform -rotate-45"
-        />
-
-        <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
-          <motion.h1
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight text-gray-900"
-        style={{ fontFamily: "'Vend Sans', 'VendSans', sans-serif" }}
-        aria-label="Hero headline"
-          >
-        Revolutionizing{" "}
-        <span className="inline-block p-2 rounded-3xl text-white bg-black">healthcare</span>
-        <br />
-        with AI and psychology
-          </motion.h1>
-
-          <div className="w-full flex justify-center">
-        <button
-          type="button"
-          onClick={onStartCall}
-          aria-label="Start call"
-          className="inline-flex items-center justify-center px-7 py-3 bg-black text-white text-lg font-semibold rounded-full shadow-md hover:bg-gray-900 active:translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-4 focus-visible:ring-black/20"
+    <div className="w-full my-10 bg-black text-white flex items-center justify-center px-8 py-12">
+      <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left Content */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="space-y-8"
         >
-          Start Call
-        </button>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            Learning Made<br />
+            Simple, Success<br />
+            Made <span className="text-red-500">Possible</span>
+          </h1>
+          
+          <p className="text-gray-400 text-lg max-w-md pb-5 border-b-2">
+            Discover a way to teach test and teach back with the agentic
+            workflows.
+          </p>
+          
+          <button
+            onClick={onStartCall}
+            className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-200 transition-all duration-300 inline-block"
+          >
+            Explore now
+          </button>
+        </motion.div>
+
+        {/* Right Image Section */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative flex justify-center lg:justify-end"
+        >
+          {/* Purple rounded rectangle background */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-purple-400 rounded-[2.5rem] transform translate-x-4 translate-y-4" />
+            
+            {/* Badge */}
+            <div className="absolute top-8 left-8 bg-purple-300 text-purple-900 px-4 py-2 rounded-2xl font-semibold text-sm z-20">
+              #1 Learning<br />Platform with<br />AI agents
+            </div>
+            
+            {/* Image container */}
+            <div className="relative bg-purple-300 rounded-[2.5rem] overflow-hidden w-[400px] h-[500px] lg:w-[450px] lg:h-[550px]">
+              <Image
+                src="/teacher.jpg"
+                alt="Learning Platform"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
           </div>
-        </div>
-      </header>
-    </>
+        </motion.div>
+      </div>
+    </div>
   );
 }

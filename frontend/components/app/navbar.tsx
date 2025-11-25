@@ -1,54 +1,63 @@
 "use client";
+import Head from "next/head";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
+  const navlinks = [
+    { name: "Categories", href: "/categories" },
+    { name: "Instructors", href: "/instructors" },
+    { name: "Agents", href: "/agent" },
+    {name: "About", href: "/about"}
+  ]
   return (
-    <nav className="fixed top-0 w-full z-50 px-10 py-5 text-gray-600">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-2xl font-extrabold text-black cursor-pointer"
-        >
-          genomic
-        </motion.div>
-
-        <motion.ul
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="flex gap-14 font-medium text-lg"
-        >
-          <li className="cursor-pointer hover:text-black">For partners</li>
-          <li className="cursor-pointer hover:text-black">For investors</li>
-        </motion.ul>
-        <motion.ul
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="flex gap-14 font-medium text-lg"
-        >
-          <li className="cursor-pointer hover:text-black bg-gray-200 p-3 rounded-3xl w-full px-7 flex items-center gap-3">
-            <svg
-              aria-hidden="true"
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            <span className="select-none">menu</span>
+   <>
+  <div className="relative flex items-center h-16 m-2 font-serif font-bold mx-9 border-b-2 border-gray-600">
+    <div className="flex items-center gap-3">
+      <motion.a
+        href="/"
+        aria-label="Home"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        className="flex items-center no-underline"
+        style={{ fontFamily: "'Vend Sans', sans-serif" }}
+      >
+        <span className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-300">
+          Xrella
+        </span>
+      </motion.a>
+    </div>
+    {/* Center navlinks */}
+    <nav className="absolute left-1/2 transform -translate-x-1/2">
+      <ul className="flex gap-6 text-white font-sans font-medium">
+        {navlinks.map((link) => (
+          <li key={link.href}>
+            <a href={link.href} className="hover:text-gray-300">
+              {link.name}
+            </a>
           </li>
-        </motion.ul>
-
-
-        
-      </div>
+        ))}
+      </ul>
     </nav>
+
+    {/* Right contact button */}
+    <div className="absolute right-4">
+      <motion.a
+        href="/contact"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        style={{ fontFamily: "'Vend Sans', sans-serif" }}
+        className="inline-flex items-center gap-3 px-5 py-2 text-lg font-medium text-slate-300 rounded-full bg-transparent shadow-none hover:bg-slate-700/10 focus:outline-none focus:ring-4 focus:ring-slate-200/40 ring-offset-2 transition-colors duration-200"
+        aria-label="Contact us"
+      >
+        <span>Contact Us</span>
+      </motion.a>
+    <Head>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+    </Head>
+   </div>
+  </div>
+   </> 
   );
 }
